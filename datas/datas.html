@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+    crossorigin="anonymous"
+  />
+  <link rel="stylesheet" href="styles.css" />
+  <title>Smart Greenhouse Application</title>
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 15px;
+      padding: 20px;
+      margin-top: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #logoutButton {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+
+    .rounded-pill {
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .data-values, .flex-container, .controls {
+      border-radius: 20px;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+
+    .flex-container, .controls {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .controls {
+      margin-top: 30px;
+    }
+
+    .fan, .controls img {
+      width: 80px;
+      height: 80px;
+    }
+
+    h1 {
+      margin-top: 10px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="d-flex justify-content-center align-items-center">
+      <img src="../SDA-Logo.svg" alt="" class="img-fluid" style="width: 200px; height: auto;">
+      <img src="../Sarıcakaya_Municipality_LOGO.svg" alt="" class="img-fluid" style="margin-left: 10px; width: 100px; height: auto;">
+    </div>
+
+    <form class="d-flex mt-3 justify-content-end" role="search">
+      <button id="logoutButton" class="btn btn-outline-success" type="button">Sign Out</button>
+    </form>
+
+    <div class="data-values mt-3">
+      <div class="TitleData text-center">
+        <h1>Smart Greenhouse Application</h1>
+      </div>
+
+      <div id="SdaProjectDatas" class="flex-container">
+        <div class="text-center">
+          <img src="images/air.png" alt="air" class="img-fluid border border-5 border-success rounded-circle">
+          <h1 id="air">Air:</h1>
+        </div>
+        <div class="text-center">
+          <img src="images/co2.png" alt="co2" class="img-fluid border border-5  border-success rounded-circle">
+          <h1 id="co2">Co2:</h1>
+        </div>
+        <div class="text-center">
+          <img src="images/icons8-humidity-96.png" alt="" class="img-fluid border border-5  border-success rounded-pill">
+          <h1 id="Humidity">Air Hum:</h1>
+        </div>
+        <div class="text-center">
+          <img src="images/icons8-temperature-high-100.png" alt="" class="img-fluid border border-5  border-success rounded-circle">
+          <h1 id="airTemp">Air Temp: </h1>
+        </div>
+        <div class="text-center">
+          <img src="images/icons8-grass-pile-96.png" alt="" class="img-fluid  border border-5  border-success rounded-pill">
+          <h1 id="gHum">G.Hum:</h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls mt-3">
+      <div class="fan text-center">
+        <img src="images/icons8-fan-96.png" alt="" class="img-fluid">
+        <h1>Fan</h1>
+        <div class="form-check form-switch">
+          <input style="width: 50px; height: 30px;" class="form-check-input" type="checkbox" role="switch" id="fanSwitch">
+        </div>
+
+        <img style="margin-top: 10px;" src="images/icons8-valve-96.png" alt="" class="img-fluid">
+        <h1>Vana</h1>
+        <div class="form-check form-switch">
+          <input style="width: 50px; height: 30px;" class="form-check-input" type="checkbox" role="switch" id="vanaSwitch">
+        </div>
+      </div>
+    </div>
+  </div>
+
+ 
+
+  
+
+    <script type="module">
+      // Firebase konfigürasyon bilgileri
+      const firebaseConfig = {
+        apiKey: "AIzaSyBCYpvSe6GVTN5tFTrIdroK5_5LNbIOjIA",
+        authDomain: "sdaprojectdatas.firebaseapp.com",
+        databaseURL: "https://sdaprojectdatas-default-rtdb.firebaseio.com",
+        projectId: "sdaprojectdatas",
+        storageBucket: "sdaprojectdatas.appspot.com",
+        messagingSenderId: "683653263158",
+        appId: "1:683653263158:web:7aae6100eec6c86128cd97",
+      };
+    
+      // Firebase uygulamasını başlat
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+      import {
+        getDatabase,
+        ref,
+        child,
+        get,
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+      import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"; // Ekledik
+    
+      const app = initializeApp(firebaseConfig);
+      const db = getDatabase();
+      const auth = getAuth(); // Doğru modülü ekledik
+    
+      // Veritabanı referansı
+      const dataRef = ref(db, "/");
+    
+      function apiTimeRequest() {
+        get(child(dataRef, "/")).then((snapshot) => {
+          const data = snapshot.val();
+    
+          // Diğer verileri güncelle
+          document.getElementById("air").innerText = `Air: ${data.Air}`;
+          document.getElementById("co2").innerText = `Co2: ${data.Co2}`;
+          document.getElementById("gHum").innerText = `G.Hum: ${data.gHum}`;
+          document.getElementById("Humidity").innerText = `Air Hum: ${data.Humidity}`;
+          document.getElementById("airTemp").innerText = `Air Temp: ${data.Temperature}`;
+    
+          // Fan ve Vana değerlerini güncelle
+          const fanSwitch = document.getElementById("fanSwitch");
+          fanSwitch.checked = data.Fan;
+    
+          const vanaSwitch = document.getElementById("vanaSwitch");
+          vanaSwitch.checked = data.Vana;
+        });
+        console.log('API isteği yapıldı.');
+      }
+    
+      // Çıkış butonuna tıklanınca çalışacak fonksiyon
+      document.getElementById('logoutButton').addEventListener('click', function() {
+        // Firebase Authentication üzerinden çıkış yap
+        signOut(auth).then(() => {
+          // Çıkış başarılı olduysa yapılacak işlemler
+          console.log('Çıkış başarılı!');
+          window.location.href = '../index.html'; // Çıkış sonrası yönlendirilecek sayfa
+        }).catch((error) => {
+          // Çıkış sırasında bir hata oluştuysa yapılacak işlemler
+          console.error('Çıkış hatası:', error);
+        });
+      });
+    
+      // Veri çekme işlemini belirli aralıklarla gerçekleştir
+      setInterval(apiTimeRequest, 5000);
+    </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="
+</body>
+</html>
+ 
