@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://kit.fontawesome.com/64d58efce2.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="style.css" />
+    <title>Smart Greenhouse Application</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="forms-container">
+        <div class="signin-signup">
+          <form action="#" id="mainForm" class="sign-in-form">
+            <img src="SDA-Logo.svg" class="image" alt="" />
+
+            <h2 class="title">Login</h2>
+            <div class="input-field">
+              <i class="fas fa-user"></i>
+              <input id="emailInp" type="email" placeholder="Email" />
+            </div>
+            <div class="input-field">
+              <i class="fas fa-lock"></i>
+              <input type="password" id="passwordInp" placeholder="Password" />
+            </div>
+            <input
+              value="Login"
+              id="LoginBtn"
+              type="submit"
+              class="btn solid"
+            />
+            <p class="social-text"></p>
+            <div class="social-media">
+              <a
+                href="https://www.facebook.com/profile.php?id=100084706666956"
+                class="social-icon"
+                target="_blank"
+              >
+                <i class="fab fa-facebook-f"></i>
+              </a>
+              <a
+                href="https://twitter.com/sdaprojecteu"
+                class="social-icon"
+                target="_blank"
+              >
+                <i class="fab fa-twitter"></i>
+              </a>
+              <a
+                href="https://www.instagram.com/sdaprojecteu/"
+                class="social-icon"
+              >
+                <i class="fab fa-instagram"></i>
+              </a>
+            </div>
+
+            <img src="sdaaa.svg" alt="" />
+          </form>
+          <form action="#" id="mainForm" class="sign-up-form">
+            <img src="SDA-Logo.svg" class="image" alt="" />
+            <!-- Sıgn Up Interface -->
+            <h2 class="title">Sign up</h2>
+            <div class="input-field">
+              <i class="fas fa-user"></i>
+              <input type="text" id="username" placeholder="Username" />
+            </div>
+            <div class="input-field">
+              <i class="fas fa-envelope"></i>
+              <input id="email" type="email" placeholder="Email" />
+            </div>
+            <div class="input-field">
+              <i class="fas fa-lock"></i>
+              <input id="password" type="password" placeholder="Password" />
+            </div>
+
+            <input id="signUpbtn" type="submit" class="btn" value="Sign up" />
+            <!-- Social Media İcons -->
+            <p class="social-text"></p>
+            <div class="social-media">
+              <a
+                href="https://www.facebook.com/profile.php?id=100084706666956"
+                class="social-icon"
+                target="_blank"
+              >
+                <i class="fab fa-facebook-f"></i>
+              </a>
+              <a
+                href="https://twitter.com/sdaprojecteu"
+                class="social-icon"
+                target="_blank"
+              >
+                <i class="fab fa-twitter"></i>
+              </a>
+              <a
+                href="https://www.instagram.com/sdaprojecteu/"
+                class="social-icon"
+              >
+                <i class="fab fa-instagram"></i>
+              </a>
+            </div>
+            <img src="sdaaa.svg" alt="" />
+          </form>
+        </div>
+      </div>
+      <!-- Side Panel  -->
+      <div class="panels-container">
+        <div class="panel left-panel">
+          <div class="content">
+            <h3>New here ?</h3>
+            <p>
+              Don't have an account yet ? Sign up and get access to all our
+              services.
+            </p>
+            <button class="btn transparent" id="sign-up-btn">Sign up</button>
+          </div>
+        </div>
+        <div class="panel right-panel">
+          <div class="content">
+            <h3>One of us ?</h3>
+            <p>
+              Already made an account here? Sign in and get access to all our
+              services.
+            </p>
+            <button class="btn transparent" id="sign-in-btn">Login</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="app.js"></script>
+  </body>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import {
+      getDatabase,
+      set,
+      ref,
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      onAuthStateChanged,
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDRAhaU2_dG16b5QfA0GkbofyUlN-aOyAk",
+      authDomain: "sdaprojecttest2.firebaseapp.com",
+      databaseURL:
+        "https://sdaprojecttest2-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "sdaprojecttest2",
+      storageBucket: "sdaprojecttest2.appspot.com",
+      messagingSenderId: "917074194258",
+      appId: "1:917074194258:web:29fde813f0c3a444c7548b",
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+    const auth = getAuth();
+
+    // Signed up page
+    signUpbtn.addEventListener("click", (e) => {
+      var email = document.getElementById("email").value;
+      var password = document.getElementById("password").value;
+      var username = document.getElementById("username").value;
+
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          alert("User created!");
+
+          set(ref(database, "users/" + user.uid), {
+            username: username,
+            email: email,
+          });
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+
+          alert(errorMessage);
+          // ..
+        });
+    });
+    // Login page
+    LoginBtn.addEventListener("click", (e) => {
+      var emailLog = document.getElementById("emailInp").value;
+      var passwordLog = document.getElementById("passwordInp").value;
+
+      signInWithEmailAndPassword(auth, emailLog, passwordLog)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          alert("User Login Succsesful");
+          if ((LoginBtn === emailLog, passwordLog)) {
+            window.location.href = "./datas/datas.html";
+          }
+          set(ref(database, "users/" + user));
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+
+          alert(errorMessage);
+        });
+    });
+    const user = auth.currentUser;
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+      } else {
+      }
+    });
+  </script>
+</html>
